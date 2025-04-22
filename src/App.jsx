@@ -1,22 +1,25 @@
 import { useState, useEffect } from 'react'
-import CatGallery from './components/CatGallery'
-import BreedFilter from './components/BreedFilter'
 import './App.css'
 
 function App() {
   const [cats, setCats] = useState([])
-  const [breeds, setBreeds] = useState([])
-  const [filteredCats, setFilteredCats] = useState([])
+  const [randomFact, setRandomFact] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://www.course-api.com/react-store-products')
-        const data = await response.json()
-        setCats(data)
-        setFilteredCats(data)
-        const uniqueBreeds = [...new Set(data.map((cat) => cat.category))]
-        setBreeds(uniqueBreeds)
+        // Fetch cat facts
+        const factsResponse = await fetch('https://catfact.ninja/facts?limit=10')
+        const factsData = await factsResponse.json()
+
+        // Generate mock data for missing fields
+        const mockData = factsData.data.map((fact, index) => ({
+          id: index + 1,
+          name: `Cat ${index + 1}`,
+          description: fact.fact,
+        }))
+
+        setCats(mockData)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -24,19 +27,18 @@ function App() {
     fetchData()
   }, [])
 
-  const handleFilter = (breed) => {
-    if (breed === 'All') {
-      setFilteredCats(cats)
-    } else {
-      setFilteredCats(cats.filter((cat) => cat.category === breed))
+  const handleRandomFact = () => {
+    if (cats.length > 0) {
+      const randomIndex = Math.floor(Math.random() * cats.length)
+      setRandomFact(cats[randomIndex].description)
     }
   }
 
   return (
     <div>
-      <h1>Cat Gallery</h1>
-      <BreedFilter breeds={breeds} onFilter={handleFilter} />
-      <CatGallery cats={filteredCats} />
+      <h1>Random Cat Fact</h1>
+      <button onClick={handleRandomFact}>Show Random Cat Fact</button>
+      {randomFact && <p><strong>Random Fact:</strong> {randomFact}</p>}
     </div>
   )
 }
