@@ -8,8 +8,8 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch cat facts
-        const factsResponse = await fetch('https://catfact.ninja/facts?limit=10')
+        // Fetch cat facts https://catfact.ninja/docs?api-docs.json
+        const factsResponse = await fetch('https://catfact.ninja/facts?limit=1000')
         const factsData = await factsResponse.json()
 
         // Generate mock data for missing fields
@@ -39,6 +39,7 @@ function App() {
       <h1>Random Cat Fact</h1>
       <button onClick={handleRandomFact}>Show Random Cat Fact</button>
       {randomFact && <p><strong>Random Fact:</strong> {randomFact}</p>}
+      <div className="cat-decal">😺</div>
     </div>
   )
 }
